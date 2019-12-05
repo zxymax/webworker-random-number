@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+  <style>
+    body {
+      font: normal 11px auto;
+      font-family: Verdana, Geneva, Tahoma, sans-serif;
+      color: #4f6b72;
+      background-color: #E6EAE9;
+    }
+    table {
+      width: 700px;
+      padding: 0;
+      margin: 0;
+    }
+    td {
+      border-right: 1px solid #C1DAD7;
+      border-bottom: 1px solid #C1DAD7;
+      background-color: #fff;
+      font-size: 11px;
+      padding: 6px 6px 6px 12px;
+      color: #4f6b72;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <table id="table"></table>
+  <script>
+    let intArr = new Array(200);
+    let str = '';
+    for (let i = 0; i < intArr.length; i++) {
+      intArr[i] = parseInt(Math.random() * 200);
+      if (i != 0)
+        str += ';';
+      str += intArr[i];
+    }
+    console.log(str)
+    let worker = new Worker('random-number.js');
+    worker.postMessage(str);
+
+    worker.onmessage = function(evt) {
+      console.log(evt)
+      if (evt.data !== "") {
+        let j, k, tr, td;
+        let intArr = evt.data.split(';');
+        let table = document.getElementById('table');
+        for (let i = 0; i < intArr.length; i++) {
+          j = parseInt(i / 10, 0);
+          k = i % 10;
+          if (k === 0) {
+            tr = document.createElement('tr');
+            tr.id = 'tr' + j;
+            table.append(tr);
+          } else {
+            tr = document.getElementById('tr' + j);
+          }
+          td = document.createElement('td');
+          tr.appendChild(td);
+          td.innerHTML = intArr[j * 10 + k];
+        }
+      }
+    }
+  </script>
+</body>
+</html>
